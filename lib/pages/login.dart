@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../routes/routes.dart';
+import '../services/todo_service.dart';
+import '../services/user_service.dart';
 import '../widgets/app_textfield.dart';
+import '../widgets/dialogs.dart';
 // import 'package:sqlite_provider_starter/routes/routes.dart';
 // import 'package:sqlite_provider_starter/widgets/app_textfield.dart';
 
@@ -14,6 +18,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   late TextEditingController usernameController;
+  
 
   @override
   void initState() {
@@ -61,12 +66,30 @@ class _LoginState extends State<Login> {
                   padding: const EdgeInsets.only(top: 12.0),
                   child: ElevatedButton(
                     onPressed: () async {
-                      Navigator.of(context).pushNamed(RouteManager.todoPage);
+                      FocusManager.instance.primaryFocus?.unfocus();
+                      if (usernameController.text.isEmpty){
+                        showSnackBar(context, 'Please enter the username first');
+                      }
+                      else{
+                        String result = await context.read<UserService>().getUser(usernameController.text.trim());
+                        if (result == 'OK'){
+                          showSnackBar(context, result);
+                        }
+                        else{
+                          String username = context.read<UserService>().currentUser.username;
+                          context.read<TodoService>().getTodos(username);
+                          Navigator.of(context)
+                          .pushNamed(RouteManager.todoPage);
+                        }
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.purple,
                     ),
-                    child: const Text('Continue', style: TextStyle(color: Colors.white),),
+                    child: const Text(
+                      'Continue',
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ),
                 TextButton(

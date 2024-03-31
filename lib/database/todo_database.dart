@@ -1,14 +1,13 @@
 import 'package:sqflite/sqflite.dart';
-
 import '../models/todo.dart';
 import '../models/user.dart';
 import 'package:path/path.dart';
 
 class TodoDatabase {
+  TodoDatabase._initialize();
 
   static final TodoDatabase instance = TodoDatabase._initialize();
   static Database? _database;
-  TodoDatabase._initialize();
 
   Future _createDB(Database db, int version) async{
     final userUsernameType = 'TEXT PRIMARY KEY NOT NULL';

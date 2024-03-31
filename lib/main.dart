@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sqlite_provider_starter/routes/routes.dart';
+
+import 'services/todo_service.dart';
+import 'services/user_service.dart';
 
 void main() {
   runApp(MyApp());
@@ -10,10 +14,16 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      initialRoute: RouteManager.loginPage,
-      onGenerateRoute: RouteManager.generateRoute,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => UserService(),),
+        ChangeNotifierProvider(create: (context) => TodoService())
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        initialRoute: RouteManager.loginPage,
+        onGenerateRoute: RouteManager.generateRoute,
+      ),
     );
   }
 }
